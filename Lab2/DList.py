@@ -29,7 +29,6 @@ class DList:
 
         '''creates an empty list'''
         
-        # intialize instance variables of linked list
         self.head = None
         self.tail = None
         self.size = 0
@@ -44,8 +43,7 @@ class DList:
     def __len__(self):
 
         '''returns number of items in the list'''
-
-        # returns the instancec variable, size
+        
         return self.size
 
     # ------------------------------------------------------------------
@@ -73,9 +71,9 @@ class DList:
         for negative positions, -1 is the last item -size is the first
         item'''
 
-        # if the head contains something
+        # if the list is empty, raise IndexError, otherwise continue
         if self.head:
-            # if the position is greater than or equal to 0 and the position is smaller than the size
+            # checks to see if it is a valid positive position
             if position >= 0 and position < self.size: 
                 # set node as first of list
                 node = self.head
@@ -84,7 +82,7 @@ class DList:
                     # next node becomes node
                     node = node.next
                 return node
-            # else if the position is less than 0 and the position is greater than or equal to negative-size
+            # checks to see if it is a valid negative position
             elif position < 0 and position >= -self.size:
                 # set self.tail as node
                 node = self.tail
@@ -177,6 +175,7 @@ class DList:
         '''appends x onto end of the list'''
 
         newNode = DListNode(x, self.tail)
+        # Check if the list is empty, then set head and tail to NewNode
         if self.size == 0:
             self.tail = newNode
             self.head = newNode
@@ -192,15 +191,20 @@ class DList:
         '''inserts x before position i in the list'''
 
         newNode = DListNode(x)
+        # Check if the list is empty, thus set the newNode to both head and tail
         if self.size == 0:
             self.head = newNode
             self.tail = newNode
-        elif i == self.size:
+        # If the size is one, just use append
+        elif i >= self.size:
             self.append(x)
-        elif i == 0:
+            self.size -= 1
+        # Check if the position is the head, and make sure that the assignments are correct
+        elif i == 0 or i < -self.size:
             self.head.prev = newNode
             newNode.next = self.head
             self.head = newNode
+        # Place item before i, making x the new i
         else:
             node = self._find(i)
             newNode.next = node
@@ -216,6 +220,7 @@ class DList:
         '''returns and removes at position i from list; the default is to
         return and remove the last item'''
 
+        # if there is no starting poisition, start at 0
         if i is None:
             i = self.size - 1
         return self._delete(i)
@@ -236,12 +241,15 @@ class DList:
 
         if self.head:
             node = self.head
+            # assume the head is the lowest value
             min = node.item
             while node:
+                # If the head is not the lowest value, update it to whatever the current lowest value is
                 if node.item < min:
                     min = node.item
                 node = node.next
             return min
+        # If the list is empty, there can't be a lowest value
         else:
             raise ValueError
 
@@ -253,12 +261,15 @@ class DList:
 
         if self.head:
             node = self.head
+            # assume the head is the highest value
             max = node.item
             while node:
+                #If the head is not the highest value, update it to whatever the current highest value is
                 if node.item > max:
                     max = node.item
                 node = node.next
             return max
+        #If the list is empty, there can't be a highest value
         else:
             raise ValueError
 
@@ -278,6 +289,7 @@ class DList:
         '''return number of occurrences of x in the list'''
         node = self.head
         count = 0
+        # As long as Node exists, keep going through the list. If Node is none, thus false, return count
         while node:
             if node.item == x:
                 count += 1
@@ -291,11 +303,14 @@ class DList:
         '''return position of first occurence of x in the list starting
         at position start'''
 
+        # Makes sure that if there was no satrting position, it starts from the beginning
         node = self._find(start)
         pos = start
+        # Keeps looping as long as it hasn't reached the end of the list, which is None, and hasn't found x
         while node and node.item != x:
             node = node.next
             pos += 1
+        # Reached the end of the list without finding x, raise an error
         if node == None:
             raise ValueError
         else:
@@ -307,6 +322,7 @@ class DList:
 
         '''iterate over items in reverse'''
 
+        # This is the reverse of __iter__
         node = self.tail
         while node is not None:
             yield node.item
